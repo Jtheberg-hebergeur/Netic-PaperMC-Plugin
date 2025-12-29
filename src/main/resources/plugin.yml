@@ -1,0 +1,18 @@
+name: NeticAI
+version: ${version}
+main: cloud.jtheberg.netic.NeticPlugin
+api-version: 1.21
+author: Jtheberg
+description: Plugin IA conversationnelle avec historique persistant en base de données
+
+commands:
+  netic:
+    description: Commandes administrateur pour gérer l'IA Netic
+    usage: /netic <reset|setname|reload|status|clearcooldown|cleardb>
+    permission: netic.admin
+    aliases: [neticai, ia]
+
+permissions:
+  netic.admin:
+    description: Permet d'utiliser les commandes admin de NeticAI
+    default: op

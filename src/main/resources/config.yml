@@ -1,0 +1,100 @@
+# ════════════════════════════════════════════════════════════
+#                    Configuration NeticAI
+# ════════════════════════════════════════════════════════════
+# Plugin créé par Kiz, S pour serveur Paper 1.21.x
+
+# ┌──────────────────────────────────────────────────────────┐
+# │                      API CONFIGURATION                   │
+# └──────────────────────────────────────────────────────────┘
+
+api:
+  # 🔑 Votre clé API Netic (OBLIGATOIRE)
+  # https://netic.jtheberg.cloud/
+  # Remplacez par votre vraie clé API
+  key: "METS_TA_CLE_API_ICI"
+
+# ┌──────────────────────────────────────────────────────────┐
+# │                   IA CONFIGURATION                       │
+# └──────────────────────────────────────────────────────────┘
+
+ia:
+  # 🤖 Nom de l'IA affiché dans le chat
+  name: "NETIC"
+
+  # 💬 Trigger pour parler à l'IA (ex: !ia Bonjour)
+  trigger: "!ia"
+
+  # ⏰ Délai minimum en secondes entre deux requêtes (anti-spam)
+  cooldown-seconds: 5
+
+  # 📝 Prompt système envoyé à l'IA pour définir son comportement
+  system-prompt: |
+    Tu es une intelligence artificielle nommée NETIC, utilisée sur un serveur Minecraft.
+    Tu parles à plusieurs joueurs en même temps dans une conversation partagée.
+    Sois clair, poli, concis et utile.
+    Adapte-toi au contexte du jeu Minecraft quand c'est pertinent.
+    Tu peux parler de commandes, de mécaniques de jeu, donner des conseils.
+    Reste toujours respectueux et bienveillant.
+    Réponds de manière naturelle et engageante.
+
+# ┌──────────────────────────────────────────────────────────┐
+# │                  HISTORY CONFIGURATION                   │
+# └──────────────────────────────────────────────────────────┘
+
+history:
+  # 📚 Nombre maximum de messages conservés en mémoire
+  # Le 21ème message supprimera automatiquement le plus ancien
+  max-messages: 20
+
+# ┌──────────────────────────────────────────────────────────┐
+# │                  DATABASE CONFIGURATION                  │
+# └──────────────────────────────────────────────────────────┘
+
+database:
+  # Type de base de données: "sqlite" ou "mariadb"
+  # SQLite = Simple, fichier local, pas de config
+  # MariaDB = Performant, serveur dédié, requiert config
+  type: "sqlite"
+
+  # ─────────── Configuration SQLite ───────────
+  sqlite:
+    # Nom du fichier de base de données (dans le dossier du plugin)
+    file: "netic_history.db"
+
+  # ─────────── Configuration MariaDB ───────────
+  mariadb:
+    host: "localhost"
+    port: 3306
+    database: "netic"
+    username: "netic_user"
+    password: "CHANGE_ME"
+
+    # Propriétés de connexion avancées (optimisation)
+    properties:
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+      useLocalSessionState: true
+      rewriteBatchedStatements: true
+      cacheResultSetMetadata: true
+      cacheServerConfiguration: true
+      elideSetAutoCommits: true
+      maintainTimeStats: false
+
+  # ─────────── Pool de connexions (HikariCP) ───────────
+  pool:
+    maximum-pool-size: 10
+    minimum-idle: 2
+    connection-timeout: 30000
+    idle-timeout: 600000
+    max-lifetime: 1800000
+
+# ════════════════════════════════════════════════════════════
+#                         NOTES
+# ════════════════════════════════════════════════════════════
+# - L'endpoint API est fixe et ne peut pas être modifié
+# - Tous les joueurs partagent la même conversation
+# - L'historique est sauvegardé en BDD ET en mémoire
+# - SQLite = 0 config, parfait pour débuter
+# - MariaDB = meilleure performance pour gros serveurs
