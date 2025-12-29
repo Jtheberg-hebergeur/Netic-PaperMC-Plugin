@@ -33,4 +33,3 @@ Tous les joueurs partagent la même conversation.
 L’historique est sauvegardé en mémoire et dans la base de données.
 
 Le plugin fonctionne sur Paper 1.21.x.
-
