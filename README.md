@@ -1,23 +1,26 @@
-# NeticAI – L’IA intelligente pour Minecraft
+# NeticAI – The Smart AI for Minecraft
 
-**Description :**  
-NeticAI intègre l’intelligence artificielle **Netic** directement dans votre serveur Minecraft (Paper 1.21.x). Grâce à ce plugin, vos joueurs peuvent discuter avec une IA capable de comprendre le contexte du jeu, donner des conseils, expliquer des mécaniques ou simplement discuter de manière naturelle et engageante.  
+![Demo](https://cdn.modrinth.com/data/cached_images/450f3ec8db4543a6eb3c9e729964691934fe7e4f.png)
 
-## Fonctionnalités principales
-- 🤖 **IA conversationnelle** : Discutez avec Netic via un simple trigger dans le chat (`!ia`).  
-- ⏰ **Anti-spam intégré** : Définissez un délai entre les messages pour éviter les abus.  
-- 📝 **Personnalisation du comportement de l’IA** : Modifiez le `system-prompt` pour ajuster le style et le ton de Netic.  
-- 📚 **Historique des conversations** : Gardez jusqu’à 20 messages en mémoire et en base de données.  
-- 💾 **Base de données flexible** : Supporte SQLite (simple) ou MariaDB (performant pour gros serveurs).  
-- 🔑 **API Netic sécurisée** : Chaque serveur utilise sa propre clé API (à obtenir sur [netic.jtheberg.cloud](https://netic.jtheberg.cloud)).
+## Description
+NeticAI brings the **Netic** artificial intelligence directly into your Minecraft server (Paper 1.21.x).  
+With this plugin, your players can chat with an AI that understands the game context, gives useful tips, explains game mechanics, or simply engages in natural and immersive conversations.
+
+## Key Features
+- 🤖 **Conversational AI**: Chat with Netic using a simple chat trigger (`!ia`).
+- ⏰ **Built-in anti-spam**: Configure a cooldown between messages to prevent abuse.
+- 📝 **Custom AI behavior**: Modify the `system-prompt` to control Netic’s personality, tone, and role.
+- 📚 **Conversation history**: Stores up to 20 messages in memory and in the database.
+- 💾 **Flexible database support**: Supports SQLite (easy setup) and MariaDB (recommended for large servers).
+- 🔑 **Secure Netic API**: Each server uses its own API key (available at [netic.jtheberg.cloud](https://netic.jtheberg.cloud)).
 
 ## Installation
-1. Téléchargez et placez le plugin dans votre dossier `plugins`.  
-2. Remplissez votre clé API dans `config.yml`.  
-3. Configurez les options selon vos besoins (nom de l’IA, trigger, délai, type de base de données).  
-4. Redémarrez votre serveur et utilisez la commande de chat pour parler à Netic.
+1. Download the plugin and place it in your `plugins` folder.
+2. Add your Netic API key to `config.yml`.
+3. Configure the plugin options (AI name, chat trigger, cooldown, database type).
+4. Restart your server and use the chat trigger to talk with Netic.
 
-## Notes importantes
-- Tous les joueurs partagent la même conversation.  
-- L’historique est sauvegardé en mémoire et dans la base de données.  
-- Le plugin fonctionne sur **Paper 1.21.x**.
+## Important Notes
+- All players share the same conversation.
+- Conversation history is saved both in memory and in the database.
+- Compatible with **Paper 1.21.x**.
