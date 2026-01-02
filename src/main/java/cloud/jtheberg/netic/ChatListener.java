@@ -6,58 +6,50 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 /**
  * Écoute les messages du chat pour détecter le trigger de l'IA
- *
- * @author Jtheberg
  */
 public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncChatEvent event) {
-        // Convertir le message en texte simple
         String message = PlainTextComponentSerializer.plainText().serialize(event.originalMessage());
-
-        // Récupérer le trigger
         String trigger = NeticPlugin.getInstance().getConfig().getString("ia.trigger", "!ia");
 
-        // Vérifier si le message commence par le trigger
         if (!message.startsWith(trigger + " ")) {
             return;
         }
 
-        // NE PAS ANNULER L'EVENT - Le message reste visible dans le chat
+        Player player = event.getPlayer();
 
         // Vérifier la clé API
         String apiKey = NeticPlugin.getInstance().getConfig().getString("api.key", "");
         if (apiKey.equals("METS_TA_CLE_API_ICI") || apiKey.isEmpty()) {
-            event.getPlayer().sendMessage(
+            player.sendMessage(
                     Component.text("❌ Clé API non configurée. Contactez un administrateur.")
                             .color(NamedTextColor.RED)
             );
             return;
         }
 
-        // Vérifier le cooldown
-        long cooldownSeconds = NeticPlugin.getInstance().getConfig().getLong("ia.cooldown-seconds", 5);
-        long cooldownMs = cooldownSeconds * 1000;
+        // Vérifier le rate limit (v2.0)
+        if (!NeticPlugin.getInstance().getRateLimitManager().tryAcquire(player)) {
+            long remaining = NeticPlugin.getInstance().getRateLimitManager().getRemainingCooldown(player);
 
-        if (!CooldownManager.canSend(cooldownMs)) {
-            int remaining = CooldownManager.getRemainingSeconds(cooldownMs);
-
-            if (remaining == -1) {
-                event.getPlayer().sendMessage(
-                        Component.text("⏳ L'IA réfléchit déjà, patiente un instant...")
-                                .color(NamedTextColor.YELLOW)
+            if (remaining > 0) {
+                player.sendMessage(
+                        Component.text("⏰ Attendez encore " + remaining + " seconde(s)")
+                                .color(NamedTextColor.GOLD)
                 );
             } else {
-                event.getPlayer().sendMessage(
-                        Component.text("⏰ Attends encore " + remaining + " seconde(s)")
-                                .color(NamedTextColor.GOLD)
+                player.sendMessage(
+                        Component.text("⏳ Trop de requêtes, ralentissez un peu!")
+                                .color(NamedTextColor.RED)
                 );
             }
             return;
@@ -67,17 +59,15 @@ public class ChatListener implements Listener {
         String question = message.substring(trigger.length()).trim();
 
         if (question.isEmpty()) {
-            event.getPlayer().sendMessage(
+            player.sendMessage(
                     Component.text("💬 Usage: " + trigger + " <ta question>")
                             .color(NamedTextColor.GRAY)
             );
-            CooldownManager.releaseRequest();
             return;
         }
 
-        // Récupérer le nom de l'IA
         String iaName = NeticPlugin.getInstance().getConfig().getString("ia.name", "NETIC");
-        String playerName = event.getPlayer().getName();
+        String playerName = player.getName();
 
         // Ajouter la question à l'historique
         HistoryManager.add("Joueur " + playerName, question);
@@ -91,7 +81,7 @@ public class ChatListener implements Listener {
         );
 
         // Appeler l'API
-        NeticClient.askIA(
+        NeticPlugin.getInstance().getNeticClient().askIA(
                 question,
                 // Callback succès
                 response -> {
@@ -103,7 +93,6 @@ public class ChatListener implements Listener {
                                     .append(Component.text("] ").color(NamedTextColor.GREEN))
                                     .append(Component.text(response).color(NamedTextColor.WHITE))
                     );
-                    CooldownManager.releaseRequest();
                 },
                 // Callback erreur
                 error -> {
@@ -114,7 +103,6 @@ public class ChatListener implements Listener {
                                     .append(Component.text("] ").color(NamedTextColor.RED))
                                     .append(Component.text(error).color(NamedTextColor.DARK_RED))
                     );
-                    CooldownManager.releaseRequest();
                 }
         );
     }

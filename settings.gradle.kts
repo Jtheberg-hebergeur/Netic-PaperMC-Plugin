@@ -1,1 +1,1 @@
-rootProject.name = "NeticAI"
+rootProject.name = "Netic"

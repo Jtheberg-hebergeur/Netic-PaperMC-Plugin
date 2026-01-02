@@ -2,9 +2,8 @@ package cloud.jtheberg.netic;
 
 /**
  * Gestionnaire de cooldown global pour éviter le spam
- * Un seul cooldown pour tout le serveur
- *
- * @author Jtheberg
+ * Note: Dans v1.0-b1-beta, ce système est remplacé par RateLimitManager
+ * mais conservé pour compatibilité
  */
 public class CooldownManager {
 
@@ -18,17 +17,14 @@ public class CooldownManager {
         long currentTime = System.currentTimeMillis();
         long timeSinceLastRequest = currentTime - lastRequestTime;
 
-        // Si une requête est déjà en cours
         if (isProcessing) {
             return false;
         }
 
-        // Vérifier le délai minimum
         if (timeSinceLastRequest < delayMs) {
             return false;
         }
 
-        // Autoriser la requête
         lastRequestTime = currentTime;
         isProcessing = true;
         return true;
@@ -46,7 +42,7 @@ public class CooldownManager {
      */
     public static synchronized int getRemainingSeconds(long delayMs) {
         if (isProcessing) {
-            return -1; // En cours de traitement
+            return -1;
         }
 
         long currentTime = System.currentTimeMillis();

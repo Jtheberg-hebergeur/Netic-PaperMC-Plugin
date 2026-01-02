@@ -14,8 +14,6 @@ import java.util.List;
 /**
  * Gestionnaire de base de données pour l'historique
  * Support SQLite et MariaDB avec pool de connexions HikariCP
- *
- * @author Jtheberg
  */
 public class DatabaseManager {
 
@@ -36,10 +34,10 @@ public class DatabaseManager {
         } else if (databaseType.equalsIgnoreCase("mariadb")) {
             initializeMariaDB(config);
         } else {
-            throw new IllegalArgumentException("Type de BDD invalide: " + databaseType + " (sqlite ou mariadb uniquement)");
+            throw new IllegalArgumentException("Type de BDD invalide: " + databaseType);
         }
 
-        // Configuration du pool de connexions
+        // Configuration du pool
         ConfigurationSection poolConfig = NeticPlugin.getInstance().getConfig().getConfigurationSection("database.pool");
         if (poolConfig != null) {
             config.setMaximumPoolSize(poolConfig.getInt("maximum-pool-size", 10));
@@ -49,18 +47,12 @@ public class DatabaseManager {
             config.setMaxLifetime(poolConfig.getLong("max-lifetime", 1800000));
         }
 
-        // Créer le pool de connexions
         dataSource = new HikariDataSource(config);
-
-        // Créer les tables nécessaires
         createTables();
 
         NeticPlugin.getInstance().getLogger().info("✅ Pool de connexions HikariCP initialisé");
     }
 
-    /**
-     * Configure SQLite
-     */
     private void initializeSQLite(HikariConfig config) {
         String fileName = NeticPlugin.getInstance().getConfig().getString("database.sqlite.file", "netic_history.db");
         File dbFile = new File(NeticPlugin.getInstance().getDataFolder(), fileName);
@@ -69,7 +61,6 @@ public class DatabaseManager {
         config.setDriverClassName("org.sqlite.JDBC");
         config.setPoolName("NeticAI-SQLite-Pool");
 
-        // Optimisations SQLite pour de meilleures performances
         config.addDataSourceProperty("journal_mode", "WAL");
         config.addDataSourceProperty("synchronous", "NORMAL");
         config.addDataSourceProperty("cache_size", "10000");
@@ -78,14 +69,11 @@ public class DatabaseManager {
         NeticPlugin.getInstance().getLogger().info("📁 SQLite: " + dbFile.getAbsolutePath());
     }
 
-    /**
-     * Configure MariaDB
-     */
     private void initializeMariaDB(HikariConfig config) {
         ConfigurationSection mariaConfig = NeticPlugin.getInstance().getConfig().getConfigurationSection("database.mariadb");
 
         if (mariaConfig == null) {
-            throw new IllegalArgumentException("Configuration MariaDB manquante dans config.yml");
+            throw new IllegalArgumentException("Configuration MariaDB manquante");
         }
 
         String host = mariaConfig.getString("host", "localhost");
@@ -100,7 +88,6 @@ public class DatabaseManager {
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.setPoolName("NeticAI-MariaDB-Pool");
 
-        // Propriétés MariaDB pour optimisation
         ConfigurationSection props = mariaConfig.getConfigurationSection("properties");
         if (props != null) {
             for (String key : props.getKeys(false)) {
@@ -111,9 +98,6 @@ public class DatabaseManager {
         NeticPlugin.getInstance().getLogger().info("🔗 MariaDB: " + host + ":" + port + "/" + database);
     }
 
-    /**
-     * Crée les tables nécessaires si elles n'existent pas
-     */
     private void createTables() throws SQLException {
         String createTableSQL;
 
@@ -128,7 +112,6 @@ public class DatabaseManager {
                 )
                 """;
 
-            // Créer l'index séparément pour SQLite
             try (Connection conn = getConnection();
                  Statement stmt = conn.createStatement()) {
                 stmt.execute(createTableSQL);
@@ -156,9 +139,6 @@ public class DatabaseManager {
         NeticPlugin.getInstance().getLogger().info("✅ Table 'netic_history' créée/vérifiée");
     }
 
-    /**
-     * Obtient une connexion depuis le pool
-     */
     public Connection getConnection() throws SQLException {
         if (dataSource == null) {
             throw new SQLException("DataSource non initialisée");
@@ -166,9 +146,6 @@ public class DatabaseManager {
         return dataSource.getConnection();
     }
 
-    /**
-     * Ajoute un message à l'historique de la base de données
-     */
     public void addMessage(String role, String playerName, String message) {
         String sql = "INSERT INTO netic_history (timestamp, role, player_name, message) VALUES (?, ?, ?, ?)";
 
@@ -188,9 +165,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Récupère les N derniers messages de la base de données
-     */
     public List<HistoryEntry> getRecentMessages(int limit) {
         List<HistoryEntry> messages = new ArrayList<>();
         String sql = "SELECT timestamp, role, player_name, message FROM netic_history ORDER BY id DESC LIMIT ?";
@@ -216,14 +190,10 @@ public class DatabaseManager {
             e.printStackTrace();
         }
 
-        // Inverser pour avoir l'ordre chronologique (du plus ancien au plus récent)
         java.util.Collections.reverse(messages);
         return messages;
     }
 
-    /**
-     * Compte le nombre total de messages dans la base de données
-     */
     public int getMessageCount() {
         String sql = "SELECT COUNT(*) as count FROM netic_history";
 
@@ -242,9 +212,6 @@ public class DatabaseManager {
         return 0;
     }
 
-    /**
-     * Supprime tous les messages de la base de données
-     */
     public void clearHistory() {
         String sql = "DELETE FROM netic_history";
 
@@ -252,7 +219,7 @@ public class DatabaseManager {
              Statement stmt = conn.createStatement()) {
 
             int deleted = stmt.executeUpdate(sql);
-            NeticPlugin.getInstance().getLogger().info("🗑️ " + deleted + " messages supprimés de la BDD");
+            NeticPlugin.getInstance().getLogger().info("🗑️ " + deleted + " messages supprimés");
 
         } catch (SQLException e) {
             NeticPlugin.getInstance().getLogger().severe("❌ Erreur suppression historique: " + e.getMessage());
@@ -260,33 +227,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Supprime les messages plus anciens que X jours
-     */
-    public void cleanOldMessages(int daysOld) {
-        String sql = "DELETE FROM netic_history WHERE timestamp < ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            LocalDateTime cutoff = LocalDateTime.now().minusDays(daysOld);
-            stmt.setString(1, cutoff.format(formatter));
-
-            int deleted = stmt.executeUpdate();
-
-            if (deleted > 0) {
-                NeticPlugin.getInstance().getLogger().info("🗑️ " + deleted + " messages anciens supprimés (>" + daysOld + " jours)");
-            }
-
-        } catch (SQLException e) {
-            NeticPlugin.getInstance().getLogger().severe("❌ Erreur nettoyage ancien historique: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Ferme proprement le pool de connexions
-     */
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
@@ -294,9 +234,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Classe représentant une entrée d'historique
-     */
     public static class HistoryEntry {
         public final String timestamp;
         public final String role;

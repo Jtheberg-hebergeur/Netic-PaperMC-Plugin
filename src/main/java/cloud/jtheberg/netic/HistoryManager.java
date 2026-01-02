@@ -6,8 +6,6 @@ import java.util.List;
 /**
  * Gestionnaire de l'historique des conversations
  * Gère la mémoire (rapide) ET la base de données (persistant)
- *
- * @author Jtheberg
  */
 public class HistoryManager {
 
@@ -68,7 +66,7 @@ public class HistoryManager {
 
         // Extraire le nom du joueur si c'est un message joueur
         if (role.startsWith("Joueur ")) {
-            playerName = role.substring(7); // Enlever "Joueur "
+            playerName = role.substring(7);
             role = "Joueur";
         }
 
@@ -80,7 +78,7 @@ public class HistoryManager {
             // Supprimer les messages les plus anciens si on dépasse la limite
             while (memoryHistory.size() > maxMessages + 1) {
                 if (memoryHistory.size() > 1) {
-                    memoryHistory.remove(1); // Ne jamais supprimer le prompt système (index 0)
+                    memoryHistory.remove(1);
                 }
             }
         }

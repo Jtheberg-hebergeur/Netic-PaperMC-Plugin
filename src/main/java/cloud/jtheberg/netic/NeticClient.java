@@ -12,8 +12,6 @@ import java.util.function.Consumer;
 
 /**
  * Client HTTP pour communiquer avec l'API Netic
- *
- * @author Jtheberg
  */
 public class NeticClient {
 
@@ -23,7 +21,7 @@ public class NeticClient {
     /**
      * Envoie une question à l'API avec l'historique complet
      */
-    public static void askIA(String message, Consumer<String> onSuccess, Consumer<String> onError) {
+    public void askIA(String message, Consumer<String> onSuccess, Consumer<String> onError) {
         String apiKey = NeticPlugin.getInstance().getConfig().getString("api.key");
 
         if (apiKey == null || apiKey.isEmpty() || apiKey.equals("METS_TA_CLE_API_ICI")) {
@@ -73,7 +71,7 @@ public class NeticClient {
         });
     }
 
-    private static String buildContextWithHistory(String currentMessage) {
+    private String buildContextWithHistory(String currentMessage) {
         StringBuilder context = new StringBuilder();
         String history = HistoryManager.getFormattedHistory();
         if (!history.isEmpty()) {
@@ -83,7 +81,7 @@ public class NeticClient {
         return context.toString();
     }
 
-    private static String buildJsonBody(String message) {
+    private String buildJsonBody(String message) {
         String escapedMessage = message
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
@@ -93,7 +91,7 @@ public class NeticClient {
         return "{\"message\":\"" + escapedMessage + "\"}";
     }
 
-    private static String parseResponse(String jsonResponse) {
+    private String parseResponse(String jsonResponse) {
         try {
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(jsonResponse);

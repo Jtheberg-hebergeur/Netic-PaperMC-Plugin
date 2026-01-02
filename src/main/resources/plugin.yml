@@ -3,16 +3,62 @@ version: ${version}
 main: cloud.jtheberg.netic.NeticPlugin
 api-version: 1.21
 author: Jtheberg
-description: Plugin IA conversationnelle avec historique persistant en base de données
+description: Plugin IA conversationnelle v1.0-b1-beta avec API publique, rate limiting et cache
+website: https://netic.jtheberg.cloud
+
+load: STARTUP
 
 commands:
   netic:
-    description: Commandes administrateur pour gérer l'IA Netic
-    usage: /netic <reset|setname|reload|status|clearcooldown|cleardb>
+    description: Commandes administrateur NeticAI v1.0-b1-beta
+    usage: |
+      /netic reset - Réinitialise l'historique
+      /netic setname <nom> - Change le nom de l'IA
+      /netic reload - Recharge la configuration
+      /netic status - Affiche le statut du plugin
+      /netic stats - Statistiques détaillées
+      /netic cache <clear|stats> - Gestion du cache
+      /netic clearcooldown - Réinitialise les rate limits
     permission: netic.admin
-    aliases: [neticai, ia]
+    aliases: [neticai, ia, nia]
 
 permissions:
   netic.admin:
-    description: Permet d'utiliser les commandes admin de NeticAI
+    description: Permet d'utiliser toutes les commandes admin
     default: op
+    children:
+      netic.reload: true
+      netic.stats: true
+      netic.cache: true
+      netic.reset: true
+
+  netic.reload:
+    description: Permet de recharger la configuration
+    default: op
+
+  netic.stats:
+    description: Permet de voir les statistiques
+    default: op
+
+  netic.cache:
+    description: Permet de gérer le cache
+    default: op
+
+  netic.reset:
+    description: Permet de réinitialiser l'historique
+    default: op
+
+  netic.bypass.ratelimit:
+    description: Ignore les limitations de rate
+    default: op
+
+  netic.bypass.cooldown:
+    description: Ignore le cooldown entre les messages
+    default: op
+
+  netic.api.use:
+    description: Permet aux autres plugins d'utiliser l'API
+    default: true
+
+provides:
+  - NeticAPI

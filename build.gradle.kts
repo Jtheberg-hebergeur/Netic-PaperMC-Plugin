@@ -3,11 +3,7 @@ plugins {
 }
 
 group = "cloud.jtheberg"
-version = "1.0"
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
+version = "1.0-1b-beta"
 
 repositories {
     mavenCentral()
@@ -15,35 +11,31 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
-
-    // Base de données
     implementation("com.zaxxer:HikariCP:5.1.0")
-    implementation("org.xerial:sqlite-jdbc:3.45.0.0")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.3.2")
+    implementation("org.xerial:sqlite-jdbc:3.47.1.0")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.1")
+    implementation("com.google.guava:guava:33.4.0-jre")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 }
 
-tasks {
-    jar {
-        archiveFileName.set("NeticAI-${version}.jar")
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
 
-        // Inclure les dépendances dans le JAR
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+tasks.jar {
+    archiveFileName.set("NeticAI-${version}.jar")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-        manifest {
-            attributes["Main-Class"] = "cloud.jtheberg.netic.NeticPlugin"
-        }
-    }
+    from(sourceSets.main.get().output)
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
 
-    processResources {
-        filesMatching("plugin.yml") {
-            expand("version" to version)
-        }
-    }
-
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
+tasks.processResources {
+    val props = mapOf("version" to version)
+    inputs.properties(props)
+    filesMatching("plugin.yml") {
+        expand(props)
     }
 }
