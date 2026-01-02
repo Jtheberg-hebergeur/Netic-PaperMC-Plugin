@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "cloud.jtheberg"
-version = "1.0-1b-beta"
+version = "1.0-b1.beta"
 
 repositories {
     mavenCentral()
