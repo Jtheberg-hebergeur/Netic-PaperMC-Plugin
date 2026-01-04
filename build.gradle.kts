@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "cloud.jtheberg"
-version = "1.0-b1.beta"
+version = "1.0-c1-beta"
 
 repositories {
     mavenCentral()
@@ -18,6 +18,8 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.1")
     implementation("com.google.guava:guava:33.4.0-jre")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
+    implementation("org.apache.httpcomponents:httpmime:4.5.14")
 }
 
 java {

@@ -3,6 +3,7 @@ package cloud.jtheberg.netic.api;
 import cloud.jtheberg.netic.NeticPlugin;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -68,8 +69,99 @@ public class NeticAPIImpl implements NeticAPI {
         });
     }
 
+    // Méthodes audio
+    @Override
+    public CompletableFuture<String> transcribeAudio(File audioFile) {
+        return transcribeAudio(null, audioFile);
+    }
+
+    @Override
+    public CompletableFuture<String> transcribeAudio(Player player, File audioFile) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        if (player != null && !canSendAudio(player)) {
+            stats.rateLimited.incrementAndGet();
+            future.completeExceptionally(new RateLimitException("Audio rate limit exceeded"));
+            return future;
+        }
+
+        stats.totalRequests.incrementAndGet();
+        long startTime = System.currentTimeMillis();
+
+        plugin.getNeticClient().transcribeAudio(audioFile,
+                transcription -> {
+                    long responseTime = System.currentTimeMillis() - startTime;
+                    stats.addResponseTime(responseTime);
+                    stats.successfulRequests.incrementAndGet();
+                    future.complete(transcription);
+                },
+                error -> {
+                    stats.failedRequests.incrementAndGet();
+                    future.completeExceptionally(new ApiException(error));
+                }
+        );
+
+        return future;
+    }
+
+    @Override
+    public void transcribeAudio(File audioFile, Consumer<String> onSuccess, Consumer<Throwable> onError) {
+        transcribeAudio(audioFile).thenAccept(onSuccess).exceptionally(ex -> {
+            onError.accept(ex);
+            return null;
+        });
+    }
+
+    @Override
+    public CompletableFuture<AudioChatResponse> chatWithAudio(File audioFile) {
+        return chatWithAudio(null, audioFile);
+    }
+
+    @Override
+    public CompletableFuture<AudioChatResponse> chatWithAudio(Player player, File audioFile) {
+        CompletableFuture<AudioChatResponse> future = new CompletableFuture<>();
+
+        if (player != null && !canSendAudio(player)) {
+            stats.rateLimited.incrementAndGet();
+            future.completeExceptionally(new RateLimitException("Audio rate limit exceeded"));
+            return future;
+        }
+
+        stats.totalRequests.incrementAndGet();
+        long startTime = System.currentTimeMillis();
+
+        plugin.getNeticClient().chatWithAudio(audioFile,
+                (response, transcription) -> {
+                    long responseTime = System.currentTimeMillis() - startTime;
+                    stats.addResponseTime(responseTime);
+                    stats.successfulRequests.incrementAndGet();
+                    plugin.getCacheManager().put(transcription, response);
+                    future.complete(new AudioChatResponse(response, transcription, System.currentTimeMillis()));
+                },
+                error -> {
+                    stats.failedRequests.incrementAndGet();
+                    future.completeExceptionally(new ApiException(error));
+                }
+        );
+
+        return future;
+    }
+
+    @Override
+    public void chatWithAudio(File audioFile, Consumer<AudioChatResponse> onSuccess, Consumer<Throwable> onError) {
+        chatWithAudio(audioFile).thenAccept(onSuccess).exceptionally(ex -> {
+            onError.accept(ex);
+            return null;
+        });
+    }
+
     @Override
     public boolean canSendMessage(Player player) {
+        return plugin.getRateLimitManager().tryAcquire(player);
+    }
+
+    @Override
+    public boolean canSendAudio(Player player) {
         return plugin.getRateLimitManager().tryAcquire(player);
     }
 

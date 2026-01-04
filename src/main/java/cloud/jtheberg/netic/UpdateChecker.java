@@ -134,7 +134,7 @@ public class UpdateChecker implements Listener {
 
     /**
      * Compare deux versions
-     * Format supporté: X.Y-ZN.type (ex: 1.0-b1.beta)
+     * Format supporté: X.Y-ZN.type (ex: 1.0-c1-beta)
      */
     private boolean isNewerVersion(String currentVersion, String newVersion) {
         try {
@@ -157,7 +157,7 @@ public class UpdateChecker implements Listener {
                 if (newer < current) return false;
             }
 
-            // Si version principale identique, comparer suffixe (ex: b1.beta vs b2.beta)
+            // Si version principale identique, comparer suffixe (ex: c1-beta vs c2-beta)
             if (currentSplit.length > 1 && newSplit.length > 1) {
                 return compareSuffix(currentSplit[1], newSplit[1]);
             }
@@ -174,11 +174,11 @@ public class UpdateChecker implements Listener {
     }
 
     /**
-     * Compare les suffixes (ex: a1.beta vs b1.beta)
+     * Compare les suffixes (ex: a1.beta vs c1-beta)
      */
     private boolean compareSuffix(String current, String newer) {
         try {
-            // Extraire lettre et numéro (ex: b1)
+            // Extraire lettre et numéro (ex: c1)
             char currentLetter = current.charAt(0);
             char newerLetter = newer.charAt(0);
 

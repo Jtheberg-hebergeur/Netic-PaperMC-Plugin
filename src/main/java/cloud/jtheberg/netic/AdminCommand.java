@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Commandes administrateur NeticAI v1.0-b1-beta
+ * Commandes administrateur NeticAI v1.0-c1-beta
  */
 public class AdminCommand implements CommandExecutor, TabCompleter {
 
@@ -152,7 +152,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
         int maxHistory = NeticPlugin.getInstance().getConfig().getInt("history.max-messages");
         int dbCount = NeticPlugin.getInstance().getDatabaseManager().getMessageCount();
 
-        sender.sendMessage(Component.text("═══ NeticAI v1.0-b1-beta - Statut ═══")
+        sender.sendMessage(Component.text("═══ NeticAI v1.0-c1-beta - Statut ═══")
                 .color(NamedTextColor.GOLD)
                 .decorate(TextDecoration.BOLD));
 
@@ -317,7 +317,7 @@ public class AdminCommand implements CommandExecutor, TabCompleter {
     /* ========================= HELP ========================= */
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(Component.text("═══ NeticAI v1.0-b1-beta - Admin ═══")
+        sender.sendMessage(Component.text("═══ NeticAI v1.0-c1-beta - Admin ═══")
                 .color(NamedTextColor.GOLD)
                 .decorate(TextDecoration.BOLD));
 

@@ -3,14 +3,14 @@ version: ${version}
 main: cloud.jtheberg.netic.NeticPlugin
 api-version: 1.21
 author: Jtheberg
-description: Plugin IA conversationnelle v1.0-b1-beta avec API publique, rate limiting et cache
+description: Plugin IA conversationnelle v1.0-c1-beta avec API publique, rate limiting, cache et support audio
 website: https://netic.jtheberg.cloud
 
 load: STARTUP
 
 commands:
   netic:
-    description: Commandes administrateur NeticAI v1.0-b1-beta
+    description: Commandes administrateur NeticAI v1.0-c1-beta
     usage: |
       /netic reset - Réinitialise l'historique
       /netic setname <nom> - Change le nom de l'IA

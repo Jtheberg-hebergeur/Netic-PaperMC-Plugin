@@ -108,7 +108,8 @@ public class DatabaseManager {
                     timestamp TEXT NOT NULL,
                     role TEXT NOT NULL,
                     player_name TEXT,
-                    message TEXT NOT NULL
+                    message TEXT NOT NULL,
+                    transcription TEXT
                 )
                 """;
 
@@ -116,6 +117,7 @@ public class DatabaseManager {
                  Statement stmt = conn.createStatement()) {
                 stmt.execute(createTableSQL);
                 stmt.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON netic_history(timestamp)");
+                stmt.execute("CREATE INDEX IF NOT EXISTS idx_transcription ON netic_history(transcription)");
             }
 
         } else {
@@ -126,7 +128,9 @@ public class DatabaseManager {
                     role VARCHAR(50) NOT NULL,
                     player_name VARCHAR(36),
                     message TEXT NOT NULL,
-                    INDEX idx_timestamp (timestamp)
+                    transcription TEXT,
+                    INDEX idx_timestamp (timestamp),
+                    INDEX idx_transcription (transcription)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
                 """;
 
@@ -147,7 +151,16 @@ public class DatabaseManager {
     }
 
     public void addMessage(String role, String playerName, String message) {
-        String sql = "INSERT INTO netic_history (timestamp, role, player_name, message) VALUES (?, ?, ?, ?)";
+        addMessage(role, playerName, message, null);
+    }
+
+    public void addMessage(String role, String playerName, String message, String transcription) {
+        String sql;
+        if (transcription != null && !transcription.isEmpty()) {
+            sql = "INSERT INTO netic_history (timestamp, role, player_name, message, transcription) VALUES (?, ?, ?, ?, ?)";
+        } else {
+            sql = "INSERT INTO netic_history (timestamp, role, player_name, message) VALUES (?, ?, ?, ?)";
+        }
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -156,6 +169,10 @@ public class DatabaseManager {
             stmt.setString(2, role);
             stmt.setString(3, playerName);
             stmt.setString(4, message);
+
+            if (transcription != null && !transcription.isEmpty()) {
+                stmt.setString(5, transcription);
+            }
 
             stmt.executeUpdate();
 
@@ -167,7 +184,7 @@ public class DatabaseManager {
 
     public List<HistoryEntry> getRecentMessages(int limit) {
         List<HistoryEntry> messages = new ArrayList<>();
-        String sql = "SELECT timestamp, role, player_name, message FROM netic_history ORDER BY id DESC LIMIT ?";
+        String sql = "SELECT timestamp, role, player_name, message, transcription FROM netic_history ORDER BY id DESC LIMIT ?";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -180,7 +197,8 @@ public class DatabaseManager {
                             rs.getString("timestamp"),
                             rs.getString("role"),
                             rs.getString("player_name"),
-                            rs.getString("message")
+                            rs.getString("message"),
+                            rs.getString("transcription")
                     ));
                 }
             }
@@ -239,20 +257,28 @@ public class DatabaseManager {
         public final String role;
         public final String playerName;
         public final String message;
+        public final String transcription;
 
-        public HistoryEntry(String timestamp, String role, String playerName, String message) {
+        public HistoryEntry(String timestamp, String role, String playerName, String message, String transcription) {
             this.timestamp = timestamp;
             this.role = role;
             this.playerName = playerName;
             this.message = message;
+            this.transcription = transcription;
         }
 
         @Override
         public String toString() {
+            StringBuilder sb = new StringBuilder();
             if (playerName != null && !playerName.isEmpty()) {
-                return role + " " + playerName + ": " + message;
+                sb.append(role).append(" ").append(playerName).append(": ").append(message);
+            } else {
+                sb.append(role).append(": ").append(message);
             }
-            return role + ": " + message;
+            if (transcription != null && !transcription.isEmpty()) {
+                sb.append(" [Transcription: ").append(transcription).append("]");
+            }
+            return sb.toString();
         }
     }
 }

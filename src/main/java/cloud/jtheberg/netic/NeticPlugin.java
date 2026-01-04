@@ -7,10 +7,10 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * NeticAI v1.0-b1-beta - Plugin principal
+ * NeticAI v1.0-c1-beta - Plugin principal
  * Plugin d'intelligence artificielle pour Minecraft avec API publique
  *
- * Nouvelles fonctionnalités v1.0-b1-beta:
+ * Nouvelles fonctionnalités v1.0-c1-beta:
  * - API publique pour autres plugins
  * - Rate limiting avancé (par joueur + global)
  * - Système de cache intelligent
@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * - Vérification automatique des mises à jour
  *
  * @author Kiz, S Jtheberg
- * @version v1.0-b1-beta
+ * @version v1.0-c1-beta
  */
 public class NeticPlugin extends JavaPlugin {
 
@@ -40,7 +40,7 @@ public class NeticPlugin extends JavaPlugin {
         long startTime = System.currentTimeMillis();
 
         getLogger().info("╔════════════════════════════════════════╗");
-        getLogger().info("║  NeticAI v1.0-b1-beta - Chargement...  ║");
+        getLogger().info("║  NeticAI v1.0-c1-beta - Chargement...  ║");
         getLogger().info("╚════════════════════════════════════════╝");
 
         // 1. Charger la configuration
@@ -192,7 +192,7 @@ public class NeticPlugin extends JavaPlugin {
         int dbMessageCount = databaseManager != null ? databaseManager.getMessageCount() : 0;
 
         getLogger().info("╔════════════════════════════════════════╗");
-        getLogger().info("║  ✅ NeticAI v1.0-b1-beta activé       ║");
+        getLogger().info("║  ✅ NeticAI v1.0-c1-beta activé       ║");
         getLogger().info("║                                       ║");
         getLogger().info("║  Nom IA: " + String.format("%-29s", iaName) + "║");
         getLogger().info("║  Trigger: " + String.format("%-28s", trigger) + "║");

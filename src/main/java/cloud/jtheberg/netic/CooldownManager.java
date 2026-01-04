@@ -2,7 +2,7 @@ package cloud.jtheberg.netic;
 
 /**
  * Gestionnaire de cooldown global pour éviter le spam
- * Note: Dans v1.0-b1-beta, ce système est remplacé par RateLimitManager
+ * Note: Dans v1.0-c1-beta, ce système est remplacé par RateLimitManager
  * mais conservé pour compatibilité
  */
 public class CooldownManager {
