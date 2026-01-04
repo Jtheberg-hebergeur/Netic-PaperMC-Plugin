@@ -1,4 +1,4 @@
-# NeticAI v1.0-b1-beta 🤖
+# NeticAI v1.0-c1-beta 🤖
 
 [![Version](https://img.shields.io/badge/version-1.0--b1--beta-blue.svg)](https://github.com/Jtheberg-hebergeur/Netic-PaperMC-Plugin/releases)
 [![Paper](https://img.shields.io/badge/Paper-1.21+-green.svg)](https://papermc.io/)
@@ -418,3 +418,4 @@ Voir [LICENSE](LICENSE) pour plus de détails.
 **Développé avec ❤️ par [Jtheberg](https://github.com/Jtheberg-hebergeur) est [Kiz, S](https://github.com/KizYTB) **
 
 Si vous aimez NeticAI, n'hésitez pas à ⭐ le projet sur GitHub !
+
