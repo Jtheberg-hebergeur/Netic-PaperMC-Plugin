@@ -169,12 +169,12 @@ public class NeticPlugin extends JavaPlugin {
         if (apiKey.equals("METS_TA_CLE_API_ICI") || apiKey.isEmpty()) {
             getLogger().warning("╔════════════════════════════════════════╗");
             getLogger().warning("║  ⚠️  CLÉ API NON CONFIGURÉE  ⚠️        ║");
-            getLogger().warning("║                                       ║");
-            getLogger().warning("║  Éditez plugins/NeticAI/config.yml   ║");
-            getLogger().warning("║  et ajoutez votre clé API            ║");
-            getLogger().warning("║                                       ║");
-            getLogger().warning("║  Obtenez votre clé sur:              ║");
-            getLogger().warning("║  https://netic.jtheberg.cloud        ║");
+            getLogger().warning("║                                        ║");
+            getLogger().warning("║  Éditez plugins/NeticAI/config.yml     ║");
+            getLogger().warning("║  et ajoutez votre clé API              ║");
+            getLogger().warning("║                                        ║");
+            getLogger().warning("║  Obtenez votre clé sur:                ║");
+            getLogger().warning("║  https://neticai.fr                    ║");
             getLogger().warning("╚════════════════════════════════════════╝");
         } else {
             getLogger().info("✅ Clé API configurée");

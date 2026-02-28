@@ -19,9 +19,9 @@ import java.util.function.Consumer;
  */
 public class NeticClient {
 
-    private static final String ENDPOINT = "https://netic.jtheberg.cloud/api/v1/chat";
-    private static final String CHAT_ENDPOINT = "https://netic.jtheberg.cloud/api/v1/chat";
-    private static final String TRANSCRIBE_ENDPOINT = "https://netic.jtheberg.cloud/api/v1/transcribe";
+    private static final String ENDPOINT = "https://api.neticai.fr/v1/chat";
+    private static final String CHAT_ENDPOINT = "https://api.neticai.fr/v1/chat";
+    private static final String TRANSCRIBE_ENDPOINT = "https://napi.neticai.fr/v1/transcribe";
     private static final Duration TIMEOUT = Duration.ofSeconds(30);
 
     /**

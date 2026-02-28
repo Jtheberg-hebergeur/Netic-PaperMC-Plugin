@@ -4,7 +4,8 @@ main: cloud.jtheberg.netic.NeticPlugin
 api-version: 1.21
 author: Jtheberg
 description: Plugin IA conversationnelle v1.0-c1-beta avec API publique, rate limiting, cache et support audio
-website: https://netic.jtheberg.cloud
+website: https://neticai.fr
+
 
 load: STARTUP
 
